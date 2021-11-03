@@ -1,5 +1,5 @@
 //
-//  FileHash+SHA.swift
+//  Hasher+SHA.swift
 //  
 //
 //  Created by Crazy凡 on 2021/11/4.
@@ -9,7 +9,7 @@ import CoreFoundation
 import CommonCrypto
 import Foundation
 
-public extension FileHash {
+public extension Hasher {
     static func sha1HashOfFile(atPath filePath: String?) -> String? {
         var context = Context<CC_SHA1_CTX>(
             objectMaker: { CC_SHA1_CTX() },
