@@ -30,5 +30,6 @@ let package = Package(
         .testTarget(
             name: "FileHashTests",
             dependencies: ["FileHash"]),
-    ]
+    ],
+    swiftLanguageVersions: [.v5]
 )
