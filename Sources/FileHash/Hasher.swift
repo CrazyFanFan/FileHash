@@ -14,11 +14,11 @@ public enum Hasher {
 }
 
 extension Hasher {
-    struct Context<HashObject> {
-        typealias ObjectMaker = () -> HashObject
-        typealias InitMethod = (UnsafeMutablePointer<HashObject>?) -> Int32
-        typealias UpdateMethod = (UnsafeMutablePointer<HashObject>?, UnsafeRawPointer?, CC_LONG) -> Int32
-        typealias FinalMethod = (UnsafeMutablePointer<UInt8>?, UnsafeMutablePointer<HashObject>?) -> Int32
+    struct Context<CTX> {
+        typealias ObjectMaker = () -> CTX
+        typealias InitMethod = (UnsafeMutablePointer<CTX>?) -> Int32
+        typealias UpdateMethod = (UnsafeMutablePointer<CTX>?, UnsafeRawPointer?, CC_LONG) -> Int32
+        typealias FinalMethod = (UnsafeMutablePointer<UInt8>?, UnsafeMutablePointer<CTX>?) -> Int32
 
         var objectMaker: ObjectMaker
         var initMethod: InitMethod
@@ -28,7 +28,7 @@ extension Hasher {
         var digestLength: Int
     }
 
-    static func hashOfFile<T>(atPath filePath: String?, with context: inout Context<T>) -> String? {
+    static func hashOfFile<CTX>(atPath filePath: String?, with context: inout Context<CTX>) -> String? {
         guard let filePath = filePath else { return nil }
 
         let url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, filePath as CFString, .cfurlposixPathStyle, false)
@@ -59,16 +59,13 @@ extension Hasher {
         var digest = [UInt8](repeating: 0, count: context.digestLength)
         _ = context.finalMethod(&digest, &hashObject)
 
-        var result: String = ""
         didSucceed = !hasMoreData
 
-        if didSucceed {
-            for index in 0..<context.digestLength {
-                result += String(format: "%02x", digest[index])
-            }
-        } else {
-            return nil
-        }
+        guard didSucceed else { return nil }
+
+        var result: String = ""
+
+        digest.forEach { result += String(format: "%02x",$0) }
 
         return result
     }

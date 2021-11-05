@@ -1,5 +1,5 @@
 import XCTest
-@testable import FileHash
+import FileHash
 
 final class FileHashTests: XCTestCase {
     private var cacheFileURL: URL?
